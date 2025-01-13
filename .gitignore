@@ -54,3 +54,6 @@ Temporary Items
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
+# Diretories
+Brain-Tumor-Classification-DataSet
