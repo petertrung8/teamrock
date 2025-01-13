@@ -5,6 +5,7 @@ torchvision==0.16.1
 mlflow
 jupyter
 scikit-learn
+scikit-image
 pandas
 seaborn
 hyperopt

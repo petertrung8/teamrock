@@ -1,6 +1,7 @@
 mlflow
 jupyter
 scikit-learn
+scikit-image
 pandas
 seaborn
 hyperopt
