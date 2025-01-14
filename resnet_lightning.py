@@ -15,6 +15,8 @@ from torchmetrics import Accuracy
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 
+import mlflow
+
 
 # Here we define a new class to turn the ResNet model that we want to use as a feature extractor
 # into a pytorch-lightning module so that we can take advantage of lightning's Trainer object.
@@ -201,7 +203,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "-g", "--gpus", help="""Enables GPU acceleration.""", type=int, default=None
     )
-    args = parser.parse_args()
+
+    parser.add_argument
+    args = parser.parse_args(
+        "--log", help="""Enable MLflow logging""", type=str, default=None
+    )
 
     # # Instantiate Model
     model = ResNetClassifier(
@@ -229,6 +235,12 @@ if __name__ == "__main__":
 
     stopping_callback = pl.callbacks.EarlyStopping()
 
+    if args.log:
+        mlflow.pytorch.autolog()
+        mlf_logger = pl.loggers.MLFlowLogger(experiment_name=args.log,
+                                             tracking_uri="file:./ml-runs")
+
+
     # Instantiate lightning trainer and train model
     trainer_args = {
         "accelerator": "gpu" if args.gpus else None,
@@ -237,10 +249,16 @@ if __name__ == "__main__":
         "max_epochs": args.num_epochs,
         "callbacks": [checkpoint_callback],
         "precision": 16 if args.mixed_precision else 32,
+        "logger": mlf_logger if args.log else None
     }
     trainer = pl.Trainer(**trainer_args)
 
     trainer.fit(model)
+
+    # if args.log:
+    #     mlf_logger.experiment.log_artifact(
+    #         run_id=mlf_logger.run_id,
+    #         local_path=checkpoint_callback.best_model_path)
 
     if args.test_set:
         trainer.test(model)
