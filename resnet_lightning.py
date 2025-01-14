@@ -204,10 +204,12 @@ if __name__ == "__main__":
         "-g", "--gpus", help="""Enables GPU acceleration.""", type=int, default=None
     )
 
-    parser.add_argument
-    args = parser.parse_args(
+    parser.add_argument(
         "--log", help="""Enable MLflow logging""", type=str, default=None
     )
+
+    args = parser.parse_args()
+        
 
     # # Instantiate Model
     model = ResNetClassifier(
