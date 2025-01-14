@@ -235,19 +235,19 @@ if __name__ == "__main__":
         save_last=True,
     )
 
-    stopping_callback = pl.callbacks.EarlyStopping()
+    stopping_callback = pl.callbacks.EarlyStopping(monitor="val_loss", mode="min")
 
     if args.log:
         mlflow.pytorch.autolog()
         mlf_logger = pl.loggers.MLFlowLogger(experiment_name=args.log,
-                                             tracking_uri="file:./ml-runs")
+                                             tracking_uri="file:./mlruns")
 
 
     # Instantiate lightning trainer and train model
     trainer_args = {
-        "accelerator": "gpu" if args.gpus else None,
-        "devices": [1],
-        "strategy": "dp" if args.gpus > 1 else None,
+        "accelerator": "gpu" if args.gpus else "auto",
+        "devices": [0],
+        "strategy": "dp" if args.gpus > 1 else "auto",
         "max_epochs": args.num_epochs,
         "callbacks": [checkpoint_callback],
         "precision": 16 if args.mixed_precision else 32,
@@ -257,10 +257,10 @@ if __name__ == "__main__":
 
     trainer.fit(model)
 
-    # if args.log:
-    #     mlf_logger.experiment.log_artifact(
-    #         run_id=mlf_logger.run_id,
-    #         local_path=checkpoint_callback.best_model_path)
+    if args.log:
+        mlf_logger.experiment.log_artifact(
+            run_id=mlf_logger.run_id,
+            local_path=checkpoint_callback.best_model_path)
 
     if args.test_set:
         trainer.test(model)

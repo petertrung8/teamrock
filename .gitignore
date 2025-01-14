@@ -55,6 +55,7 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
-# Diretories
+# Directories
 Brain-Tumor-Classification-DataSet
-*/artifacts
+mlruns
+models
