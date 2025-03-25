@@ -1,0 +1,4 @@
+numpy 
+matplotlib
+fastai==2.7.18
+pandas
